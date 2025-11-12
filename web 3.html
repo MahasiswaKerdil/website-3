@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Siswa</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Login Container */
+        #login-container {
+            max-width: 400px;
+            width: 90%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        #login-container h1 {
+            color: #1976d2;
+            margin-bottom: 20px;
+        }
+
+        #login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #login-form input {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #login-form button {
+            padding: 10px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        #login-error {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        #container {
+            max-width: 1200px;
+            width: 95%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        header h1 {
+            color: #1976d2;
+            margin: 0;
+        }
+
+        #user-info {
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        #logout-btn {
+            padding: 8px 16px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        #logout-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .nav-btn.active {
+            background: #1976d2;
+            color: white;
+        }
+
+        .nav-btn:hover {
+            background: #1565c0;
+            color: white;
+        }
+
+        /* Dashboard */
+        #dashboard {
+            text-align: center;
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #1976d2;
+        }
+
+        .stat-card h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .recent-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .data-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .data-card h3 {
+            margin-top: 0;
+            color: #1976d2;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        select {
+            padding: 5px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            margin-bottom: 20px;
+        }
+
+        .tab-content h2 {
+            margin-bottom: 20px;
+            color: #1976d2;
+            text-align: center;
+        }
+
+        /* Attendance Summary */
+        #attendance-summary {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        #attendance-summary p {
+            margin: 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Controls */
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #reset-btn {
+            padding: 10px 20px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        #reset-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* Last Updated */
+        .last-updated {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        /* Hidden Class */
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+            }
+            
+            .dashboard-stats, .recent-data {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="login-container">
+        <h1>Login Sistem Manajemen Siswa</h1>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="login-error" class="hidden">Login gagal. Coba lagi.</p>
+    </div>
+    
+    <div id="container" class="hidden">
+        <header>
+            <h1>Sistem Manajemen Siswa</h1>
+            <p id="user-info">Selamat datang, ADMIN </p>
+            <button id="logout-btn">Logout</button>
+        </header>
+        
+        <nav>
+            <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-btn" data-tab="attendance">Presensi</button>
+            <button class="nav-btn" data-tab="grading">Nilai Siswa</button>
+            <button class="nav-btn" data-tab="schedule">Jadwal Pelajaran</button>
+        </nav>
+        
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content">
+            <div class="dashboard-header">
+                <h2>Dashboard Utama</h2>
+                <p>Ringkasan data siswa dan aktivitas terbaru</p>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Total Siswa</h3>
+                    <div class="stat-number" id="total-students">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Kehadiran Hari Ini</h3>
+                    <div class="stat-number" id="today-attendance">0%</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Rata-rata Nilai</h3>
+                    <div class="stat-number" id="average-grade">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Data Terakhir Diperbarui</h3>
+                    <div id="last-updated-time">-</div>
+                </div>
+            </div>
+            
+            <div class="recent-data">
+                <div class="data-card">
+                    <h3>Presensi Terbaru</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Siswa</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-attendance">
+                            <!-- Recent attendance data -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Nilai Terbaru</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Siswa</th>
+                                <th>Matematika</th>
+                                <th>Bahasa Indonesia</th>
+                                <th>IPA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-grades">
+                            <!-- Recent grades data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="last-updated">
+                <p>Data terakhir disimpan: <span id="save-time">-</span></p>
+            </div>
+        </div>
+        
+        <!-- Attendance -->
+        <div id="attendance" class="tab-content hidden">
+            <h2>Presensi Siswa</h2>
+            <label for="date-select">Tanggal:</label>
+            <input type="date" id="date-select" value="2025-11-15">
+            <table id="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Nama Siswa</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+            <div id="attendance-summary">
+                <p>Hadir: <span id="present-count">0</span></p>
+                <p>Tidak Hadir: <span id="absent-count">0</span></p>
+                <p>Izin: <span id="excused-count">0</span></p>
+            </div>
+        </div>
+        
+        <!-- Grading -->
+        <div id="grading" class="tab-content hidden">
+            <h2>Nilai Siswa</h2>
+            <table id="grading-table">
+                <thead>
+                    <tr>
+                        <th>Nama Siswa</th>
+                        <th>Matematika</th>
+                        <th>Bahasa Indonesia</th>
+                        <th>IPA</th>
+                        <th>Rata-rata</th>
+                    </tr>
+                </thead>
+                <tbody id="grading-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Schedule -->
+        <div id="schedule" class="tab-content hidden">
+            <h2>Jadwal Mata Pelajaran</h2>
+            <table id="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Hari</th>
+                        <th>Waktu</th>
+                        <th>Mata Pelajaran</th>
+                        <th>Guru</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="controls">
+            <button id="reset-btn">Reset Semua Data</button>
+        </div>
+    </div>
+    
+    <script>
+        // Sample Data
+        const students = [
+            "Ahmad Fauzi", "Budi Santoso", "Citra Dewi", "Dedi Rahman", "Eka Sari",
+            "Fajar Nugroho", "Gita Permata", "Hadi Wijaya", "Indah Lestari", "Joko Susilo",
+            "Kartika Putri", "Lutfi Hakim", "Maya Sari", "Nanda Kusuma", "Oka Pratama",
+            "Putri Ayu", "Rudi Hartono", "Sari Indah", "Taufik Rahman", "Umi Kalsum",
+            "Vino Setiawan", "Wulan Sari", "Xander Yuda", "Yuni Astuti", "Zaki Maulana"
+        ];
+
+        const subjects = ["Matematika", "Bahasa Indonesia", "IPA"];
+
+        const schedule = [
+            { day: "Senin", time: "08:00 - 09:00", subject: "Matematika", teacher: "Pak Ahmad" },
+            { day: "Senin", time: "09:00 - 10:00", subject: "Bahasa Indonesia", teacher: "Bu Sari" },
+            { day: "Selasa", time: "08:00 - 09:00", subject: "IPA", teacher: "Pak Budi" },
+            { day: "Selasa", time: "09:00 - 10:00", subject: "Matematika", teacher: "Pak Ahmad" },
+            { day: "Rabu", time: "08:00 - 09:00", subject: "Bahasa Indonesia", teacher: "Bu Sari" },
+            { day: "Rabu", time: "09:00 - 10:00", subject: "IPA", teacher: "Pak Budi" },
+            { day: "Kamis", time: "08:00 - 09:00", subject: "Matematika", teacher: "Pak Ahmad" },
+            { day: "Kamis", time: "09:00 - 10:00", subject: "Bahasa Indonesia", teacher: "Bu Sari" },
+            { day: "Jumat", time: "08:00 - 09:00", subject: "IPA", teacher: "Pak Budi" }
+        ];
+
+        // State Variables
+        let attendanceData = {};
+        let gradingData = {};
+        let lastSavedTime = null;
+        let currentUser = null;
+
+        // Initialize
+        function init() {
+            // Prepopulate attendance (default to 'Hadir')
+            students.forEach(student => {
+                attendanceData[student] = 'Hadir';
+            });
+            
+            // Prepopulate grading (random scores 0-100)
+            students.forEach(student => {
+                gradingData[student] = {};
+                subjects.forEach(subject => {
+                    gradingData[student][subject] = Math.floor(Math.random() * 101);
+                });
+            });
+            
+            // Set initial save time
+            updateSaveTime();
+            
+            if (currentUser) {
+                renderContent();
+            }
+        }
+
+        // Login Handling
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const errorEl = document.getElementById('login-error');
+            errorEl.classList.add('hidden');
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin') {
+                currentUser = { role: 'admin', name: 'Admin' };
+                showMain();
+            } else {
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        // Show Main Interface
+        function showMain() {
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('container').classList.remove('hidden');
+            document.getElementById('user-info').textContent = `Selamat datang, ${currentUser.name}`;
+            renderContent();
+        }
+
+        // Logout Functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                document.getElementById('container').classList.add('hidden');
+                document.getElementById('login-container').classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                currentUser = null;
+            }
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.add('hidden');
+                });
+                
+                // Show selected tab content
+                const tabId = button.dataset.tab;
+                document.getElementById(tabId).classList.remove('hidden');
+            });
+        });
+
+        // Render Content
+        function renderContent() {
+            renderDashboard();
+            renderAttendance();
+            renderGrading();
+            renderSchedule();
+        }
+
+        // Update Save Time
+        function updateSaveTime() {
+            lastSavedTime = new Date();
+            document.getElementById('save-time').textContent = lastSavedTime.toLocaleString('id-ID');
+            document.getElementById('last-updated-time').textContent = lastSavedTime.toLocaleString('id-ID');
+        }
+
+        // Render Dashboard
+        function renderDashboard() {
+            // Total students
+            document.getElementById('total-students').textContent = students.length;
+            
+            // Today's attendance
+            let presentCount = 0;
+            students.forEach(student => {
+                if (attendanceData[student] === 'Hadir') presentCount++;
+            });
+            const attendanceRate = Math.round((presentCount / students.length) * 100);
+            document.getElementById('today-attendance').textContent = `${attendanceRate}%`;
+            
+            // Average grade
+            let totalGrade = 0;
+            let gradeCount = 0;
+            students.forEach(student => {
+                subjects.forEach(subject => {
+                    totalGrade += gradingData[student][subject];
+                    gradeCount++;
+                });
+            });
+            const averageGrade = Math.round(totalGrade / gradeCount);
+            document.getElementById('average-grade').textContent = averageGrade;
+            
+            // Recent attendance (show first 5 students)
+            const recentAttendance = document.getElementById('recent-attendance');
+            recentAttendance.innerHTML = '';
+            students.slice(0, 5).forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student}</td>
+                    <td>${attendanceData[student]}</td>
+                `;
+                recentAttendance.appendChild(row);
+            });
+            
+            // Recent grades (show first 5 students)
+            const recentGrades = document.getElementById('recent-grades');
+            recentGrades.innerHTML = '';
+            students.slice(0, 5).forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student}</td>
+                    <td>${gradingData[student]['Matematika']}</td>
+                    <td>${gradingData[student]['Bahasa Indonesia']}</td>
+                    <td>${gradingData[student]['IPA']}</td>
+                `;
+                recentGrades.appendChild(row);
+            });
+        }
+
+        // Render Attendance
+        function renderAttendance() {
+            const tbody = document.getElementById('attendance-body');
+            tbody.innerHTML = '';
+            let present = 0, absent = 0, excused = 0;
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student}</td>
+                    <td>
+                        <select data-student="${student}">
+                            <option value="Hadir" ${attendanceData[student] === 'Hadir' ? 'selected' : ''}>Hadir</option>
+                            <option value="Tidak Hadir" ${attendanceData[student] === 'Tidak Hadir' ? 'selected' : ''}>Tidak Hadir</option>
+                            <option value="Izin" ${attendanceData[student] === 'Izin' ? 'selected' : ''}>Izin</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(row);
+                
+                const select = row.querySelector('select');
+                select.addEventListener('change', (e) => {
+                    attendanceData[student] = e.target.value;
+                    updateAttendanceSummary();
+                    updateSaveTime();
+                    renderDashboard(); // Update dashboard when attendance changes
+                });
+                
+                if (attendanceData[student] === 'Hadir') present++;
+                else if (attendanceData[student] === 'Tidak Hadir') absent++;
+                else excused++;
+            });
+            
+            updateAttendanceSummary();
+        }
+
+        function updateAttendanceSummary() {
+            let present = 0, absent = 0, excused = 0;
+            students.forEach(student => {
+                if (attendanceData[student] === 'Hadir') present++;
+                else if (attendanceData[student] === 'Tidak Hadir') absent++;
+                else excused++;
+            });
+            document.getElementById('present-count').textContent = present;
+            document.getElementById('absent-count').textContent = absent;
+            document.getElementById('excused-count').textContent = excused;
+        }
+
+        // Render Grading
+        function renderGrading() {
+            const tbody = document.getElementById('grading-body');
+            tbody.innerHTML = '';
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                const grades = gradingData[student];
+                const average = Math.round((grades[subjects[0]] + grades[subjects[1]] + grades[subjects[2]]) / 3);
+                
+                row.innerHTML = `
+                    <td>${student}</td>
+                    <td>
+                        <input type="number" min="0" max="100" value="${grades[subjects[0]]}" 
+                               data-student="${student}" data-subject="${subjects[0]}">
+                    </td>
+                    <td>
+                        <input type="number" min="0" max="100" value="${grades[subjects[1]]}" 
+                               data-student="${student}" data-subject="${subjects[1]}">
+                    </td>
+                    <td>
+                        <input type="number" min="0" max="100" value="${grades[subjects[2]]}" 
+                               data-student="${student}" data-subject="${subjects[2]}">
+                    </td>
+                    <td>${average}</td>
+                `;
+                tbody.appendChild(row);
+                
+                // Add event listeners to grade inputs
+                row.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const student = e.target.dataset.student;
+                        const subject = e.target.dataset.subject;
+                        gradingData[student][subject] = parseInt(e.target.value);
+                        
+                        // Update average
+                        const newAverage = Math.round(
+                            (gradingData[student][subjects[0]] + 
+                             gradingData[student][subjects[1]] + 
+                             gradingData[student][subjects[2]]) / 3
+                        );
+                        row.querySelector('td:last-child').textContent = newAverage;
+                        
+                        updateSaveTime();
+                        renderDashboard(); // Update dashboard when grades change
+                    });
+                });
+            });
+        }
+
+        // Render Schedule
+        function renderSchedule() {
+            const tbody = document.getElementById('schedule-body');
+            tbody.innerHTML = '';
+            
+            schedule.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.day}</td>
+                    <td>${item.time}</td>
+                    <td>${item.subject}</td>
+                    <td>${item.teacher}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Reset Functionality
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin mereset semua data?')) {
+                // Reset attendance
+                students.forEach(student => {
+                    attendanceData[student] = 'Hadir';
+                });
+                
+                // Reset grades with new random values
+                students.forEach(student => {
+                    subjects.forEach(subject => {
+                        gradingData[student][subject] = Math.floor(Math.random() * 101);
+                    });
+                });
+                
+                // Re-render content
+                renderContent();
+                updateSaveTime();
+                alert('Data berhasil direset!');
+            }
+        });
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
